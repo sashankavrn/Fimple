@@ -1,29 +1,17 @@
-# Step 1 build 
+## Step 1 build 
 docker build -t fimple .
 
-# Step 2 run the database
+## Step 2 run the database
 docker run -p 5432:5432 -v dbdata:/var/lib/postgresql/data -e POSTGRES_DB=docker -e POSTGRES_USER=docker -e POSTGRES_PASSWORD=docker postgres
 
-# on MAc get IP and update SQLALCHEMY_DATABASE_URI
-# on another host use localhost instead of IP
-
-# IP of en0  `ipconfig getifaddr en0`
-
-# Step 3 remove the container if exists
+## Step 3 remove the container if exists
 docker rm fimple 
 
-# Step 4 on MAc get IP and update SQLALCHEMY_DATABASE_URI
-# on another host use localhost instead of IP
+## Step 4 on MAC get IP and update SQLALCHEMY_DATABASE_URI on another host use localhost instead of IP
 export IP=`ipconfig getifaddr en0`
 
-# Step 5 and run the webserver 
+## Step 5 and run the webserver 
 docker run --name fimple -p 9500:5000 -e SQLALCHEMY_DATABASE_URI="postgresql://docker:docker@${IP}/docker" -e FLASK_CONFIG=development -e FLASK_APP=run.py fimple 
 
-# Step 6 exec to the webserver 
-docker exec -it fimple bash
-
-# Step 7 run the following commands only once inside the container
-mv migrations migrations-bkup
-flask db init
-flask db migrate
-flask db upgrade 
+## Step 6 exec to the webserver 
+docker exec -it fimple bash /usr/src/app/migrate.sh
